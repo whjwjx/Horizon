@@ -144,7 +144,8 @@ cat data/discovery-report-DATE.md
             date = datetime.now().strftime("%Y-%m-%d")
             filename = f"discovery-report-{date}.md"
 
-        filepath = self.data_dir / filename
+        filepath = Path(filename)
+        filepath.parent.mkdir(parents=True, exist_ok=True)
         filepath.write_text(report, encoding="utf-8")
 
         return filepath

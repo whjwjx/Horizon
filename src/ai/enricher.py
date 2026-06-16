@@ -59,9 +59,9 @@ class ContentEnricher:
             TextColumn("[progress.description]{task.description}"),
             BarColumn(),
             MofNCompleteColumn(),
-            transient=True,
+            transient=False,
         ) as progress:
-            task = progress.add_task("Enriching", total=len(items))
+            task = progress.add_task(f"[cyan]Enriching {len(items)} items...[/cyan]", total=len(items))
             coros = [
                 _process(item, task) for item in items
             ]
@@ -74,15 +74,12 @@ class ContentEnricher:
             List of dicts with keys: title, url, body
         """
         try:
-            # Suppress primp "Impersonate ... does not exist" stderr warning
-            stderr = sys.stderr
-            sys.stderr = open(os.devnull, "w")
-            try:
-                ddgs = DDGS()
-                results = await asyncio.to_thread(ddgs.text, query, max_results=max_results)
-            finally:
-                sys.stderr.close()
-                sys.stderr = stderr
+            # Use context manager for safer stderr handling
+            import contextlib
+            with open(os.devnull, "w") as devnull:
+                with contextlib.redirect_stderr(devnull):
+                    ddgs = DDGS()
+                    results = await asyncio.to_thread(ddgs.text, query, max_results=max_results)
         except Exception:
             return []
 
@@ -144,6 +141,12 @@ class ContentEnricher:
         Args:
             item: Content item to enrich (modified in-place via metadata)
         """
+        import time
+        start_time = time.time()
+
+        # Show which item is being processed
+        print(f"   📝 Processing: {item.title[:60]}...", flush=True)
+
         # Extract content text and comments separately
         content_text = ""
         comments_text = ""
@@ -156,23 +159,30 @@ class ContentEnricher:
                 content_text = item.content[:4000]
 
         # Step 1: AI identifies concepts to explain
+        print(f"      🔍 Extracting concepts...", flush=True)
         queries = await self._extract_concepts(item, content_text)
+        if queries:
+            print(f"      ✓ Found {len(queries)} concepts to search", flush=True)
 
         # Step 2: Search web for each concept
         all_results = []
         web_sections = []
-        for query in queries:
-            results = await self._web_search(query)
-            all_results.extend(results)
-            if results:
-                lines = [f"- [{r['title']}]({r['url']}): {r['body']}" for r in results]
-                web_sections.append(f"**{query}:**\n" + "\n".join(lines))
+        if queries:
+            print(f"      🌐 Searching web for {len(queries)} concepts...", flush=True)
+            for i, query in enumerate(queries, 1):
+                results = await self._web_search(query)
+                all_results.extend(results)
+                if results:
+                    lines = [f"- [{r['title']}]({r['url']}): {r['body']}" for r in results]
+                    web_sections.append(f"**{query}:**\n" + "\n".join(lines))
+            print(f"      ✓ Found {len(all_results)} web results", flush=True)
         web_context = "\n\n".join(web_sections) if web_sections else ""
 
         # Index of available URLs for citation validation
         available_urls = {r["url"]: r["title"] for r in all_results if r.get("url")}
 
         # Step 3: AI generates background grounded in search results
+        print(f"      🤖 Generating background knowledge...", flush=True)
         user_prompt = CONTENT_ENRICHMENT_USER.format(
             title=item.title,
             url=str(item.url),
@@ -195,7 +205,7 @@ class ContentEnricher:
         if result is None:
             # Gracefully degrade: fall back to a lightweight translation
             # instead of dropping the item untranslated.
-            print(f"Warning: could not parse enrichment response for {item.id}, falling back to translation")
+            print(f"      ⚠️  Warning: could not parse enrichment response, falling back to translation", flush=True)
             await self._translate_item(item)
             return
 
@@ -230,6 +240,10 @@ class ContentEnricher:
             ]
             if valid:
                 item.metadata["sources"] = valid
+
+        # Show completion time
+        elapsed = time.time() - start_time
+        print(f"      ✓ Completed in {elapsed:.1f}s", flush=True)
 
         # Backward-compatible fallback fields (English as default)
         item.metadata["detailed_summary"] = item.metadata.get("detailed_summary_en", "")

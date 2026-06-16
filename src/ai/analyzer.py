@@ -85,6 +85,12 @@ class ContentAnalyzer:
         Args:
             item: Content item to analyze (modified in-place)
         """
+        import time
+        start_time = time.time()
+
+        # Show which item is being analyzed
+        print(f"   📝 Analyzing: {item.title[:60]}...", flush=True)
+
         # Prepare content section
         content_section = ""
         if item.content:
@@ -140,6 +146,7 @@ class ContentAnalyzer:
         )
 
         # Get AI completion
+        print(f"      🤖 Scoring with AI...", flush=True)
         response = await self.client.complete(
             system=CONTENT_ANALYSIS_SYSTEM,
             user=user_prompt,
@@ -148,7 +155,7 @@ class ContentAnalyzer:
         # Parse JSON response with robust fallback
         result = self._parse_json_response(response)
         if result is None:
-            print(f"Warning: could not parse analysis response for {item.id}, using defaults")
+            print(f"      ⚠️  Warning: could not parse analysis response, using defaults", flush=True)
             item.ai_score = 0.0
             item.ai_reason = "Analysis response parse failed"
             item.ai_summary = item.title
@@ -160,3 +167,7 @@ class ContentAnalyzer:
         item.ai_reason = result.get("reason", "")
         item.ai_summary = result.get("summary", item.title)
         item.ai_tags = result.get("tags", [])
+
+        # Show completion time and score
+        elapsed = time.time() - start_time
+        print(f"      ✓ Score: {item.ai_score:.1f}/10 in {elapsed:.1f}s", flush=True)

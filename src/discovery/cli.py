@@ -5,6 +5,7 @@ import asyncio
 import sys
 import os
 from pathlib import Path
+from datetime import datetime
 
 # Fix Windows encoding issue
 if sys.platform == 'win32':
@@ -22,6 +23,7 @@ load_dotenv()
 
 from ..models import Config
 from ..storage.manager import StorageManager
+from ..services.webhook import WebhookNotifier
 from .discoverer import SourceDiscoverer, ExistingSources
 from .reporter import DiscoveryReporter
 
@@ -117,6 +119,11 @@ async def run_discovery(
         console.print(f"[red]❌ Error loading config: {e}[/red]")
         sys.exit(1)
 
+    # Initialize webhook notifier if configured
+    webhook_notifier = None
+    if config.webhook and config.webhook.enabled:
+        webhook_notifier = WebhookNotifier(config.webhook, console=console)
+
     # Load existing sources
     existing_sources = load_existing_sources(config)
 
@@ -163,6 +170,21 @@ async def run_discovery(
             console.print("\n[yellow]⚠️  没有发现新的高质量信息源[/yellow]")
             console.print("[yellow]建议：尝试不同的关键词或增加搜索范围[/yellow]")
             console.print(f"[yellow]提示：已过滤 {len(existing_sources.rss_urls) + len(existing_sources.subreddits) + len(existing_sources.github_repos)} 个已订阅源[/yellow]")
+
+            # 创建空报告文件，避免工作流失败
+            reporter = DiscoveryReporter()
+            report = reporter.generate_report([], list(topics))
+            reporter.save_report(report, output)
+            console.print(f"\n[green]✅ 空报告已保存: {output}[/green]")
+
+            # Send webhook notification for no results
+            if webhook_notifier:
+                await webhook_notifier.send_discovery_report(
+                    recommendations=[],
+                    topics=list(topics),
+                    date=datetime.now().strftime("%Y-%m-%d"),
+                    output_path=output,
+                )
             return
 
         # Generate report
@@ -178,6 +200,15 @@ async def run_discovery(
 
         # Display top recommendations
         display_top_recommendations(recommendations[:5])
+
+        # Send webhook notification
+        if webhook_notifier:
+            await webhook_notifier.send_discovery_report(
+                recommendations=recommendations,
+                topics=list(topics),
+                date=datetime.now().strftime("%Y-%m-%d"),
+                output_path=output,
+            )
 
     finally:
         await discoverer.close()

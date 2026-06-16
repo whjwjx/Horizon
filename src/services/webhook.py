@@ -772,3 +772,97 @@ class WebhookNotifier:
                 "summary": f"generation failed: {error_message}",
             }
         )
+
+    async def send_discovery_report(
+        self,
+        recommendations: List[Any],
+        topics: List[str],
+        date: str,
+        output_path: str,
+    ) -> None:
+        """Send discovery report webhook notification.
+
+        Args:
+            recommendations: List of SourceRecommendation objects
+            topics: List of searched topics
+            date: Date string (YYYY-MM-DD)
+            output_path: Path to the saved report
+        """
+        total = len(recommendations)
+        high_quality = sum(1 for r in recommendations if r.quality_score >= 9.0)
+
+        # Build summary content
+        if total == 0:
+            summary = (
+                f"# 🔍 信息源发现报告 - {date}\n\n"
+                f"> 搜索话题: {', '.join(topics)}\n\n"
+                "⚠️ 没有发现新的高质量信息源\n\n"
+                "建议：尝试不同的关键词或增加搜索范围"
+            )
+        else:
+            summary = (
+                f"# 🔍 信息源发现报告 - {date}\n\n"
+                f"> 搜索话题: {', '.join(topics)}\n\n"
+                f"✅ 发现 **{total}** 个新信息源\n"
+                f"⭐ 高质量源: **{high_quality}** 个\n\n"
+                "## 🏆 Top 推荐\n\n"
+            )
+
+            for i, rec in enumerate(recommendations[:5], 1):
+                stars = "⭐" * min(int(rec.quality_score / 2), 5)
+                summary += (
+                    f"**{i}. {rec.name}** {stars}\n"
+                    f"- 评分: {rec.quality_score:.1f}/10\n"
+                    f"- 理由: {rec.reason}\n"
+                    f"- RSS: `{rec.rss_url}`\n\n"
+                )
+
+            summary += f"\n📄 完整报告: {output_path}"
+
+        # Build Feishu card if configured
+        if self._can_use_feishu_collapsible():
+            card_body = {
+                "msg_type": "interactive",
+                "card": {
+                    "schema": "2.0",
+                    "config": {
+                        "wide_screen_mode": True,
+                        "update_multi": True,
+                    },
+                    "header": {
+                        "title": _text(f"🔍 Horizon 信息源发现 - {date}"),
+                        "template": "blue",
+                    },
+                    "body": {
+                        "elements": [_markdown(summary)],
+                    },
+                },
+            }
+            await self.notify(
+                {
+                    "date": date,
+                    "language": "zh",
+                    "important_items": total,
+                    "all_items": total,
+                    "result": "success",
+                    "timestamp": str(int(datetime.now(timezone.utc).timestamp())),
+                    "message_title": f"Horizon 信息源发现 - {date}",
+                    "message_kind": "discovery",
+                    "_request_body_override": card_body,
+                }
+            )
+        else:
+            # Generic webhook format
+            await self.notify(
+                {
+                    "date": date,
+                    "language": "zh",
+                    "important_items": total,
+                    "all_items": total,
+                    "result": "success",
+                    "timestamp": str(int(datetime.now(timezone.utc).timestamp())),
+                    "message_title": f"Horizon 信息源发现 - {date}",
+                    "message_kind": "discovery",
+                    "summary": summary,
+                }
+            )

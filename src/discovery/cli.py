@@ -163,6 +163,12 @@ async def run_discovery(
             console.print("\n[yellow]⚠️  没有发现新的高质量信息源[/yellow]")
             console.print("[yellow]建议：尝试不同的关键词或增加搜索范围[/yellow]")
             console.print(f"[yellow]提示：已过滤 {len(existing_sources.rss_urls) + len(existing_sources.subreddits) + len(existing_sources.github_repos)} 个已订阅源[/yellow]")
+
+            # 创建空报告文件，避免工作流失败
+            reporter = DiscoveryReporter()
+            report = reporter.generate_report([], list(topics))
+            reporter.save_report(report, output)
+            console.print(f"\n[green]✅ 空报告已保存: {output}[/green]")
             return
 
         # Generate report

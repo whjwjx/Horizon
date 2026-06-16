@@ -35,6 +35,14 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: uv run horizon-discover --output docs/discovered-sources.md
 
+      - name: Verify output file
+        run: |
+          if [ ! -f docs/discovered-sources.md ]; then
+            echo "❌ Error: discovered-sources.md was not created"
+            exit 1
+          fi
+          echo "✅ Output file created successfully"
+
       - name: Commit discovered sources
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"

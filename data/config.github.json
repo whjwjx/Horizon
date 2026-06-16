@@ -7,17 +7,27 @@
     "api_key_env": "DEEPSEEK_API_KEY",
     "temperature": 0.3,
     "max_tokens": 4096,
-    "throttle_sec": 0,
+    "throttle_sec": 2,
     "analysis_concurrency": 1,
-    "enrichment_concurrency": 1
+    "enrichment_concurrency": 1,
+    "languages": ["en", "zh"]
   },
+  "interests": [
+    "AI",
+    "机器学习",
+    "个人成长",
+    "音乐",
+    "健身",
+    "艺术审美",
+    "思维认知"
+  ],
   "email": {
     "enabled": false,
     "smtp_server": "smtp.qq.com",
     "smtp_port": 465,
     "imap_server": "imap.qq.com",
     "imap_port": 993,
-    "email_address": "xxx@qq.com",
+    "email_address": "test@example.com",
     "sender_name": "Horizon Daily",
     "subscribe_keyword": "SUBSCRIBE",
     "unsubscribe_keyword": "UNSUBSCRIBE"
@@ -25,34 +35,89 @@
   "sources": {
     "github": [
       {
-        "type": "user_events",
-        "username": "torvalds",
+        "type": "repo_releases",
+        "owner": "openai",
+        "repo": "tiktoken",
         "enabled": true
       },
       {
         "type": "repo_releases",
-        "owner": "astral-sh",
-        "repo": "uv",
+        "owner": "anthropics",
+        "repo": "anthropic-sdk-python",
         "enabled": true
       }
     ],
     "hackernews": {
       "enabled": true,
-      "fetch_top_stories": 20,
-      "min_score": 100
+      "fetch_top_stories": 8,
+      "min_score": 300
     },
     "rss": [
+      {
+        "name": "OpenAI Blog",
+        "url": "https://openai.com/blog/rss.xml",
+        "enabled": true,
+        "category": "ai"
+      },
+      {
+        "name": "Anthropic Blog",
+        "url": "https://www.anthropic.com/index.xml",
+        "enabled": true,
+        "category": "ai"
+      },
       {
         "name": "Simon Willison",
         "url": "https://simonwillison.net/atom/everything/",
         "enabled": true,
-        "category": "ai-tools"
+        "category": "tech"
       },
       {
-        "name": "LWN.net (subscriber full-text)",
-        "url": "https://lwn.net/headlines/full_text?key=${LWN_KEY}",
-        "enabled": false,
-        "category": "linux"
+        "name": "Paul Graham Essays",
+        "url": "http://www.aaronsw.com/2002/feeds/pgessays.rss",
+        "enabled": true,
+        "category": "startup"
+      },
+      {
+        "name": "TechCrunch",
+        "url": "https://techcrunch.com/feed/",
+        "enabled": true,
+        "category": "tech-news"
+      },
+      {
+        "name": "The Verge",
+        "url": "https://www.theverge.com/rss/index.xml",
+        "enabled": true,
+        "category": "tech-news"
+      },
+      {
+        "name": "James Clear (个人成长)",
+        "url": "https://jamesclear.com/feed",
+        "enabled": true,
+        "category": "growth"
+      },
+      {
+        "name": "Farnam Street (思维认知)",
+        "url": "https://fs.blog/feed/",
+        "enabled": true,
+        "category": "thinking"
+      },
+      {
+        "name": "NME Music News (音乐资讯)",
+        "url": "https://www.nme.com/feed",
+        "enabled": true,
+        "category": "music"
+      },
+      {
+        "name": "Creative Boom (艺术设计)",
+        "url": "https://www.creativeboom.com/feed/",
+        "enabled": true,
+        "category": "art"
+      },
+      {
+        "name": "Product Hunt (AI应用)",
+        "url": "https://www.producthunt.com/feed",
+        "enabled": true,
+        "category": "ai-apps"
       }
     ],
     "reddit": {
@@ -63,67 +128,40 @@
           "enabled": true,
           "sort": "hot",
           "time_filter": "day",
-          "fetch_limit": 15,
-          "min_score": 50
-        }
-      ],
-      "users": [
+          "fetch_limit": 5,
+          "min_score": 100
+        },
         {
-          "username": "iamthatis",
+          "subreddit": "programming",
           "enabled": true,
-          "sort": "new",
-          "fetch_limit": 10
+          "sort": "hot",
+          "time_filter": "day",
+          "fetch_limit": 5,
+          "min_score": 100
         }
       ],
-      "fetch_comments": 5
+      "users": [],
+      "fetch_comments": 2
     },
     "twitter": {
-      "enabled": false,
-      "users": ["karpathy", "ylecun"],
-      "fetch_limit": 10,
-      "fetch_reply_text": false,
-      "max_replies_per_tweet": 3,
-      "max_tweets_to_expand": 10,
-      "reply_min_likes": 5
+      "enabled": false
     },
     "openbb": {
-      "enabled": false,
-      "fetch_filings": false,
-      "filings_provider": "sec",
-      "watchlists": [
-        {
-          "name": "megacaps",
-          "enabled": true,
-          "provider": "yfinance",
-          "fetch_limit": 20,
-          "category": "equities",
-          "symbols": ["AAPL", "MSFT", "NVDA", "GOOGL", "AMZN", "META", "TSLA"]
-        }
-      ]
+      "enabled": false
     },
     "ossinsight": {
-      "enabled": false,
-      "period": "past_24_hours",
-      "languages": ["All", "Python", "TypeScript"],
-      "keywords": [],
-      "min_stars": 10,
-      "max_items": 30
+      "enabled": false
     }
   },
   "filtering": {
-    "ai_score_threshold": 6.0,
+    "ai_score_threshold": 6.5,
     "time_window_hours": 24,
-    "max_items": null,
-    "category_groups": {},
-    "default_group": "other",
-    "default_group_limit": null
+    "max_items": 15
   },
   "webhook": {
-    "enabled": true,
     "url_env": "FEISHU_WEBHOOK_URL",
     "platform": "feishu",
     "layout": "collapsible",
-    "delivery": "summary",
-    "overview_position": "first"
+    "enabled": true
   }
 }

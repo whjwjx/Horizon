@@ -170,7 +170,7 @@ async def run_discovery(
         report = reporter.generate_report(recommendations, list(topics))
 
         # Save report
-        output_path = reporter.save_report(report, Path(output).name)
+        output_path = reporter.save_report(report, output)
         console.print(f"\n[green]✅ 报告已保存: {output_path}[/green]")
 
         # Display summary

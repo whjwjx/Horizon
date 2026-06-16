@@ -1,0 +1,427 @@
+"""RSS source discovery using AI and web search."""
+
+import asyncio
+import json
+import re
+import sys
+from dataclasses import dataclass, field
+from datetime import datetime
+from pathlib import Path
+from typing import List, Optional, Set
+from urllib.parse import urlparse
+
+import httpx
+from rich.console import Console
+
+from ..ai.client import create_ai_client
+from ..models import AIConfig
+
+
+@dataclass
+class ExistingSources:
+    """用户已订阅的信息源"""
+    rss_urls: Set[str] = field(default_factory=set)
+    subreddits: Set[str] = field(default_factory=set)
+    github_repos: Set[str] = field(default_factory=set)
+    twitter_users: Set[str] = field(default_factory=set)
+
+
+@dataclass
+class SourceRecommendation:
+    """Recommended RSS source."""
+    name: str
+    url: str
+    rss_url: Optional[str]
+    topic: str
+    quality_score: float
+    reason: str
+    recent_posts: List[str]
+    update_frequency: str
+    source_type: str = "rss"  # rss, reddit, github, twitter
+
+
+class SourceDiscoverer:
+    """Discover high-quality RSS sources based on user interests."""
+
+    def __init__(
+        self,
+        ai_config: AIConfig,
+        existing_sources: ExistingSources = None,
+        data_dir: str = "data"
+    ):
+        self.ai_client = create_ai_client(ai_config)
+        self.existing = existing_sources or ExistingSources()
+        self.data_dir = Path(data_dir)
+        self.console = Console(force_terminal=True)  # Force terminal output
+        self.http_client = httpx.AsyncClient(timeout=30.0)
+
+    async def discover(self, topics: List[str], max_per_topic: int = 3) -> List[SourceRecommendation]:
+        """
+        Discover new RSS sources for given topics, excluding already subscribed sources.
+
+        Args:
+            topics: List of topics to search for
+            max_per_topic: Maximum sources to discover per topic
+
+        Returns:
+            List of recommended sources
+        """
+        all_recommendations = []
+
+        for topic in topics:
+            self.console.print(f"\n🔍 Searching for: [cyan]{topic}[/cyan]")
+            sys.stdout.flush()
+
+            # Step 1: AI generates search queries
+            queries = await self._generate_search_queries(topic)
+            self.console.print(f"   Generated {len(queries)} search queries")
+            sys.stdout.flush()
+
+            # Step 2: Search web for each query
+            for i, query in enumerate(queries, 1):
+                self.console.print(f"   🌐 Searching query {i}/{len(queries)}: {query[:50]}...")
+                sys.stdout.flush()
+
+                results = await self._web_search(query)
+                self.console.print(f"      Found {len(results)} results")
+                sys.stdout.flush()
+
+                # Step 3: Extract potential RSS sources
+                sources = await self._extract_sources(results, topic)
+                self.console.print(f"      Extracted {len(sources)} potential sources")
+                sys.stdout.flush()
+
+                # Step 4: Evaluate quality and filter existing
+                for source in sources[:max_per_topic]:
+                    # Skip if already subscribed
+                    if self._is_already_subscribed(source):
+                        self.console.print(f"   ⊘ Skipped (already subscribed): {source.get('name', 'Unknown')}")
+                        sys.stdout.flush()
+                        continue
+
+                    self.console.print(f"   📝 Evaluating: {source.get('name', 'Unknown')[:40]}...")
+                    sys.stdout.flush()
+
+                    recommendation = await self._evaluate_source(source, topic)
+
+                    if recommendation and recommendation.quality_score >= 7.0:
+                        all_recommendations.append(recommendation)
+                        self.console.print(f"   ✓ Found: {recommendation.name} (Score: {recommendation.quality_score:.1f})")
+                    else:
+                        score = recommendation.quality_score if recommendation else 0
+                        self.console.print(f"   ✗ Low quality (Score: {score:.1f}), skipped")
+                    sys.stdout.flush()
+
+        # Sort by quality score
+        all_recommendations.sort(key=lambda x: x.quality_score, reverse=True)
+
+        return all_recommendations
+
+    def _is_already_subscribed(self, source: dict) -> bool:
+        """Check if source is already subscribed."""
+        url = source.get("url", "")
+        rss_url = source.get("rss_url", "")
+
+        # Check RSS
+        if rss_url and rss_url in self.existing.rss_urls:
+            return True
+        if url and url in self.existing.rss_urls:
+            return True
+
+        # Check Reddit (if URL contains reddit.com)
+        if "reddit.com/r/" in url:
+            match = re.search(r'reddit\.com/r/([^/]+)', url)
+            if match:
+                subreddit = match.group(1).lower()
+                if subreddit in self.existing.subreddits:
+                    return True
+
+        # Check GitHub (if URL contains github.com)
+        if "github.com/" in url:
+            match = re.search(r'github\.com/([^/]+)/([^/]+)', url)
+            if match:
+                owner_repo = f"{match.group(1)}/{match.group(2)}".lower()
+                if owner_repo in self.existing.github_repos:
+                    return True
+
+        return False
+
+    async def _generate_search_queries(self, topic: str) -> List[str]:
+        """Generate search queries for a topic using AI."""
+        prompt = f"""Generate 3 search queries to find high-quality blogs and RSS feeds about "{topic}".
+
+Requirements:
+- Focus on finding blogs, news sites, or publications with RSS feeds
+- Use terms like "blog", "RSS feed", "newsletter"
+- Prioritize quality over quantity
+
+Return JSON array with 3 search query strings:
+["query1", "query2", "query3"]"""
+
+        try:
+            response = await self.ai_client.complete(
+                system="You are a search expert. Return only valid JSON, no other text.",
+                user=prompt
+            )
+
+            # Parse JSON response
+            json_match = re.search(r'\[.*\]', response, re.DOTALL)
+            if json_match:
+                queries = json.loads(json_match.group())
+                return queries[:3]
+        except Exception as e:
+            self.console.print(f"   ⚠️  Error generating queries: {e}")
+
+        # Fallback queries
+        return [
+            f"{topic} blog RSS feed",
+            f"best {topic} blogs",
+            f"{topic} newsletter RSS"
+        ]
+
+    async def _web_search(self, query: str) -> List[dict]:
+        """Search the web using DuckDuckGo."""
+        try:
+            # Use DuckDuckGo HTML search
+            url = "https://html.duckduckgo.com/html/"
+            params = {"q": query}
+
+            response = await self.http_client.get(url, params=params)
+            response.raise_for_status()
+
+            # Parse HTML to extract results
+            results = self._parse_search_results(response.text)
+            return results[:10]  # Top 10 results
+
+        except Exception as e:
+            self.console.print(f"   ⚠️  Search error: {e}")
+            return []
+
+    def _parse_search_results(self, html: str) -> List[dict]:
+        """Parse DuckDuckGo HTML results."""
+        results = []
+
+        # Simple regex-based parsing
+        # Look for result links
+        pattern = r'<a rel="nofollow" class="result__a" href="([^"]+)"[^>]*>([^<]+)</a>'
+        matches = re.findall(pattern, html)
+
+        for url, title in matches[:10]:
+            # Clean URL (remove DuckDuckGo redirect)
+            if "uddg=" in url:
+                actual_url = re.search(r'uddg=([^&]+)', url)
+                if actual_url:
+                    url = actual_url.group(1)
+
+            results.append({
+                "title": title.strip(),
+                "url": url
+            })
+
+        return results
+
+    async def _extract_sources(self, search_results: List[dict], topic: str) -> List[dict]:
+        """Extract potential RSS sources from search results."""
+        sources = []
+
+        for result in search_results:
+            url = result.get("url", "")
+            title = result.get("title", "")
+
+            # Skip obvious non-blog sites
+            skip_domains = [
+                "youtube.com", "twitter.com", "facebook.com",
+                "instagram.com", "linkedin.com", "reddit.com"
+            ]
+
+            if any(domain in url for domain in skip_domains):
+                continue
+
+            # Try to find RSS feed
+            rss_url = await self._find_rss_feed(url)
+
+            if rss_url:
+                sources.append({
+                    "name": title,
+                    "url": url,
+                    "rss_url": rss_url,
+                    "topic": topic
+                })
+
+        return sources
+
+    async def _find_rss_feed(self, website_url: str) -> Optional[str]:
+        """Find RSS feed URL for a website."""
+        try:
+            response = await self.http_client.get(website_url)
+            response.raise_for_status()
+
+            html = response.text
+
+            # Common RSS patterns
+            rss_patterns = [
+                r'<link[^>]*type="application/rss\+xml"[^>]*href="([^"]+)"',
+                r'<link[^>]*type="application/atom\+xml"[^>]*href="([^"]+)"',
+                r'href="(/feed/)"',
+                r'href="(/rss/)"',
+                r'href="(/feed\.xml)"',
+            ]
+
+            for pattern in rss_patterns:
+                match = re.search(pattern, html, re.IGNORECASE)
+                if match:
+                    rss_url = match.group(1)
+
+                    # Make absolute URL
+                    if rss_url.startswith('/'):
+                        parsed = urlparse(website_url)
+                        rss_url = f"{parsed.scheme}://{parsed.netloc}{rss_url}"
+
+                    return rss_url
+
+            # Try common RSS paths
+            common_paths = ["/feed", "/rss", "/feed.xml", "/rss.xml", "/atom.xml"]
+            parsed = urlparse(website_url)
+            base_url = f"{parsed.scheme}://{parsed.netloc}"
+
+            for path in common_paths:
+                test_url = base_url + path
+                try:
+                    test_response = await self.http_client.head(test_url)
+                    if test_response.status_code == 200:
+                        return test_url
+                except:
+                    continue
+
+        except Exception:
+            pass
+
+        return None
+
+    async def _evaluate_source(self, source: dict, topic: str) -> Optional[SourceRecommendation]:
+        """Evaluate the quality of a potential RSS source."""
+        try:
+            # Fetch RSS feed
+            rss_url = source.get("rss_url")
+            if not rss_url:
+                return None
+
+            response = await self.http_client.get(rss_url)
+            response.raise_for_status()
+
+            # Parse RSS content
+            rss_content = response.text
+
+            # Extract recent posts
+            recent_posts = self._extract_recent_posts(rss_content)
+
+            if not recent_posts:
+                return None
+
+            # AI evaluates quality
+            quality_score, reason = await self._ai_evaluate_quality(
+                source["name"],
+                topic,
+                recent_posts,
+                rss_content[:500]
+            )
+
+            # Estimate update frequency
+            update_frequency = self._estimate_update_frequency(rss_content)
+
+            return SourceRecommendation(
+                name=source["name"],
+                url=source["url"],
+                rss_url=rss_url,
+                topic=topic,
+                quality_score=quality_score,
+                reason=reason,
+                recent_posts=recent_posts[:3],
+                update_frequency=update_frequency
+            )
+
+        except Exception as e:
+            self.console.print(f"   ⚠️  Error evaluating {source['name']}: {e}")
+            return None
+
+    def _extract_recent_posts(self, rss_content: str) -> List[str]:
+        """Extract recent post titles from RSS content."""
+        posts = []
+
+        # Extract titles
+        title_pattern = r'<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>'
+        matches = re.findall(title_pattern, rss_content, re.DOTALL)
+
+        for title in matches[1:6]:  # Skip first (usually feed title)
+            title = title.strip()
+            if title and len(title) > 10:
+                posts.append(title)
+
+        return posts
+
+    async def _ai_evaluate_quality(
+        self,
+        source_name: str,
+        topic: str,
+        recent_posts: List[str],
+        rss_sample: str
+    ) -> tuple[float, str]:
+        """Use AI to evaluate source quality."""
+
+        prompt = f"""Evaluate the quality of this RSS source for the topic "{topic}".
+
+Source Name: {source_name}
+
+Recent Posts:
+{chr(10).join(f'- {post}' for post in recent_posts)}
+
+RSS Sample:
+{rss_sample[:300]}
+
+Evaluate based on:
+1. Content relevance to the topic
+2. Content depth and quality
+3. Update frequency
+4. Professional tone
+
+Return JSON:
+{{
+  "score": <float between 0-10>,
+  "reason": "<one sentence explanation>"
+}}"""
+
+        try:
+            response = await self.ai_client.complete(
+                system="You are a content quality evaluator. Return only valid JSON.",
+                user=prompt
+            )
+
+            # Parse JSON
+            json_match = re.search(r'\{.*\}', response, re.DOTALL)
+            if json_match:
+                result = json.loads(json_match.group())
+                score = float(result.get("score", 0))
+                reason = result.get("reason", "")
+                return score, reason
+
+        except Exception:
+            pass
+
+        # Default score
+        return 5.0, "Unable to evaluate quality"
+
+    def _estimate_update_frequency(self, rss_content: str) -> str:
+        """Estimate how often the source updates."""
+        # Simple heuristic based on content length
+        if len(rss_content) > 50000:
+            return "Multiple times per day"
+        elif len(rss_content) > 20000:
+            return "Daily"
+        elif len(rss_content) > 5000:
+            return "Weekly"
+        else:
+            return "Occasional"
+
+    async def close(self):
+        """Close HTTP client."""
+        await self.http_client.aclose()

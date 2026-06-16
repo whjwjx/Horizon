@@ -389,3 +389,7 @@ class Config(BaseModel):
     filtering: FilteringConfig
     email: Optional[EmailConfig] = None
     webhook: Optional[WebhookConfig] = None
+    interests: List[str] = Field(
+        default_factory=lambda: ["AI", "科技", "编程"],
+        description="User's interests for discovery recommendations"
+    )

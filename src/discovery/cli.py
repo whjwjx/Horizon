@@ -5,6 +5,7 @@ import asyncio
 import sys
 import os
 from pathlib import Path
+from datetime import datetime
 
 # Fix Windows encoding issue
 if sys.platform == 'win32':
@@ -178,12 +179,11 @@ async def run_discovery(
 
             # Send webhook notification for no results
             if webhook_notifier:
-                await _send_discovery_webhook(
-                    webhook_notifier,
+                await webhook_notifier.send_discovery_report(
                     recommendations=[],
                     topics=list(topics),
+                    date=datetime.now().strftime("%Y-%m-%d"),
                     output_path=output,
-                    config=config
                 )
             return
 
@@ -203,12 +203,11 @@ async def run_discovery(
 
         # Send webhook notification
         if webhook_notifier:
-            await _send_discovery_webhook(
-                webhook_notifier,
+            await webhook_notifier.send_discovery_report(
                 recommendations=recommendations,
                 topics=list(topics),
+                date=datetime.now().strftime("%Y-%m-%d"),
                 output_path=output,
-                config=config
             )
 
     finally:
@@ -251,57 +250,6 @@ def display_top_recommendations(recommendations: list):
         console.print(f"   [dim]建议:[/dim] {recommendation}")
         console.print(f"   [dim]RSS:[/dim] {rec.rss_url}")
         console.print()
-
-
-async def _send_discovery_webhook(
-    webhook_notifier: WebhookNotifier,
-    recommendations: list,
-    topics: list,
-    output_path: str,
-    config
-):
-    """Send discovery results to webhook."""
-    from datetime import datetime
-
-    date = datetime.now().strftime("%Y-%m-%d")
-    total = len(recommendations)
-    high_quality = sum(1 for r in recommendations if r.quality_score >= 9.0)
-
-    # Build message for Feishu
-    if total == 0:
-        summary = f"# 🔍 信息源发现报告 - {date}\n\n"
-        summary += f"> 搜索话题: {', '.join(topics)}\n\n"
-        summary += "⚠️ 没有发现新的高质量信息源\n\n"
-        summary += "建议：尝试不同的关键词或增加搜索范围"
-    else:
-        summary = f"# 🔍 信息源发现报告 - {date}\n\n"
-        summary += f"> 搜索话题: {', '.join(topics)}\n\n"
-        summary += f"✅ 发现 **{total}** 个新信息源\n"
-        summary += f"⭐ 高质量源: **{high_quality}** 个\n\n"
-        summary += "## 🏆 Top 推荐\n\n"
-
-        for i, rec in enumerate(recommendations[:5], 1):
-            stars = "⭐" * min(int(rec.quality_score / 2), 5)
-            summary += f"**{i}. {rec.name}** {stars}\n"
-            summary += f"- 评分: {rec.quality_score:.1f}/10\n"
-            summary += f"- 理由: {rec.reason}\n"
-            summary += f"- RSS: `{rec.rss_url}`\n\n"
-
-        summary += f"\n📄 完整报告: {output_path}"
-
-    # Send notification
-    console.print("\n[cyan]📤 发送飞书通知...[/cyan]")
-    await webhook_notifier.notify({
-        "date": date,
-        "language": "zh",
-        "important_items": total,
-        "all_items": total,
-        "result": "success",
-        "timestamp": str(int(datetime.now().timestamp())),
-        "message_title": f"Horizon 信息源发现 - {date}",
-        "message_kind": "discovery",
-        "summary": summary,
-    })
 
 
 if __name__ == '__main__':

@@ -380,6 +380,33 @@ class FilteringConfig(BaseModel):
     default_group_limit: Optional[int] = Field(default=None, gt=0)
 
 
+class DiscoveryConfig(BaseModel):
+    """RSS source discovery configuration."""
+
+    quality_threshold: float = Field(
+        default=5.5,
+        ge=0.0,
+        le=10.0,
+        description="Minimum quality score for recommended sources (0-10)"
+    )
+    max_per_topic: int = Field(
+        default=3,
+        ge=1,
+        le=10,
+        description="Maximum sources to discover per topic"
+    )
+    search_results_per_query: int = Field(
+        default=10,
+        ge=5,
+        le=50,
+        description="Number of search results to fetch per query"
+    )
+    enabled: bool = Field(
+        default=True,
+        description="Enable/disable discovery feature"
+    )
+
+
 class Config(BaseModel):
     """Main configuration model."""
 
@@ -389,6 +416,7 @@ class Config(BaseModel):
     filtering: FilteringConfig
     email: Optional[EmailConfig] = None
     webhook: Optional[WebhookConfig] = None
+    discovery: DiscoveryConfig = Field(default_factory=DiscoveryConfig)
     interests: List[str] = Field(
         default_factory=lambda: ["AI", "科技", "编程"],
         description="User's interests for discovery recommendations"

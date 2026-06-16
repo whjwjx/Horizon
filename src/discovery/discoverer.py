@@ -15,7 +15,7 @@ from rich.console import Console
 from ddgs import DDGS
 
 from ..ai.client import create_ai_client
-from ..models import AIConfig
+from ..models import AIConfig, DiscoveryConfig
 
 
 @dataclass
@@ -48,13 +48,15 @@ class SourceDiscoverer:
         self,
         ai_config: AIConfig,
         existing_sources: ExistingSources = None,
-        data_dir: str = "data"
+        data_dir: str = "data",
+        discovery_config: DiscoveryConfig = None
     ):
         self.ai_client = create_ai_client(ai_config)
         self.existing = existing_sources or ExistingSources()
         self.data_dir = Path(data_dir)
         self.console = Console(force_terminal=True)  # Force terminal output
         self.http_client = httpx.AsyncClient(timeout=30.0)
+        self.discovery_config = discovery_config or DiscoveryConfig()
 
     async def discover(self, topics: List[str], max_per_topic: int = 3) -> List[SourceRecommendation]:
         """
@@ -105,7 +107,7 @@ class SourceDiscoverer:
 
                     recommendation = await self._evaluate_source(source, topic)
 
-                    if recommendation and recommendation.quality_score >= 7.0:
+                    if recommendation and recommendation.quality_score >= self.discovery_config.quality_threshold:
                         all_recommendations.append(recommendation)
                         self.console.print(f"   ✓ Found: {recommendation.name} (Score: {recommendation.quality_score:.1f})")
                     else:
@@ -186,7 +188,7 @@ Return JSON array with 3 search query strings:
             # 使用 ddgs 库而不是手动解析 HTML
             with DDGS() as ddgs:
                 # 同步搜索，在异步函数中运行
-                results = list(ddgs.text(query, max_results=10))
+                results = list(ddgs.text(query, max_results=self.discovery_config.search_results_per_query))
             
             formatted_results = []
             for result in results:
@@ -360,16 +362,41 @@ Recent Posts:
 RSS Sample:
 {rss_sample[:300]}
 
-Evaluate based on:
-1. Content relevance to the topic
-2. Content depth and quality
-3. Update frequency
-4. Professional tone
+Evaluate based on 4 dimensions (each 0-2.5 points):
+
+1. Content relevance to the topic (0-2.5 points)
+   - 2.5: Highly relevant, focused on the topic
+   - 1.5: Moderately relevant
+   - 0.5: Tangentially related
+
+2. Content depth and quality (0-2.5 points)
+   - 2.5: In-depth, original insights
+   - 1.5: Decent coverage
+   - 0.5: Shallow or generic
+
+3. Update frequency (0-2.5 points)
+   - 2.5: Regular updates (weekly+)
+   - 1.5: Occasional updates
+   - 0.5: Rarely updated
+
+4. Professional tone (0-2.5 points)
+   - 2.5: Expert-level, authoritative
+   - 1.5: Professional
+   - 0.5: Casual or amateur
+
+Total score = sum of 4 dimensions (0-10)
+
+Scoring guide:
+- 8.5+: Excellent source, must subscribe
+- 7.0-8.4: Good source, recommended
+- 5.5-6.9: Acceptable, consider subscribing
+- Below 5.5: Low quality, skip
 
 Return JSON:
 {{
   "score": <float between 0-10>,
-  "reason": "<one sentence explanation>"
+  "reason_en": "<one sentence explanation in English>",
+  "reason_zh": "<one sentence explanation in Chinese>"
 }}"""
 
         try:
@@ -383,7 +410,19 @@ Return JSON:
             if json_match:
                 result = json.loads(json_match.group())
                 score = float(result.get("score", 0))
-                reason = result.get("reason", "")
+                reason_en = result.get("reason_en", "")
+                reason_zh = result.get("reason_zh", "")
+
+                # 合并英文和中文理由
+                if reason_en and reason_zh:
+                    reason = f"{reason_en}\n{reason_zh}"
+                elif reason_en:
+                    reason = reason_en
+                elif reason_zh:
+                    reason = reason_zh
+                else:
+                    reason = "Unable to evaluate quality"
+
                 return score, reason
 
         except Exception:

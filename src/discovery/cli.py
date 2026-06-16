@@ -160,7 +160,11 @@ async def run_discovery(
     console.print(f"[bold]过滤已订阅源:[/bold] ✅ 启用\n")
 
     # Initialize discoverer with existing sources
-    discoverer = SourceDiscoverer(config.ai, existing_sources)
+    discoverer = SourceDiscoverer(
+        ai_config=config.ai,
+        existing_sources=existing_sources,
+        discovery_config=config.discovery
+    )
 
     try:
         # Discover sources

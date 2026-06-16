@@ -12,6 +12,7 @@ from urllib.parse import urlparse
 
 import httpx
 from rich.console import Console
+from ddgs import DDGS
 
 from ..ai.client import create_ai_client
 from ..models import AIConfig
@@ -180,45 +181,26 @@ Return JSON array with 3 search query strings:
         ]
 
     async def _web_search(self, query: str) -> List[dict]:
-        """Search the web using DuckDuckGo."""
+        """Search the web using DuckDuckGo official library."""
         try:
-            # Use DuckDuckGo HTML search
-            url = "https://html.duckduckgo.com/html/"
-            params = {"q": query}
-
-            response = await self.http_client.get(url, params=params)
-            response.raise_for_status()
-
-            # Parse HTML to extract results
-            results = self._parse_search_results(response.text)
-            return results[:10]  # Top 10 results
+            # 使用 ddgs 库而不是手动解析 HTML
+            with DDGS() as ddgs:
+                # 同步搜索，在异步函数中运行
+                results = list(ddgs.text(query, max_results=10))
+            
+            formatted_results = []
+            for result in results:
+                formatted_results.append({
+                    "title": result.get("title", ""),
+                    "url": result.get("href", ""),
+                    "snippet": result.get("body", "")
+                })
+            
+            return formatted_results
 
         except Exception as e:
             self.console.print(f"   ⚠️  Search error: {e}")
             return []
-
-    def _parse_search_results(self, html: str) -> List[dict]:
-        """Parse DuckDuckGo HTML results."""
-        results = []
-
-        # Simple regex-based parsing
-        # Look for result links
-        pattern = r'<a rel="nofollow" class="result__a" href="([^"]+)"[^>]*>([^<]+)</a>'
-        matches = re.findall(pattern, html)
-
-        for url, title in matches[:10]:
-            # Clean URL (remove DuckDuckGo redirect)
-            if "uddg=" in url:
-                actual_url = re.search(r'uddg=([^&]+)', url)
-                if actual_url:
-                    url = actual_url.group(1)
-
-            results.append({
-                "title": title.strip(),
-                "url": url
-            })
-
-        return results
 
     async def _extract_sources(self, search_results: List[dict], topic: str) -> List[dict]:
         """Extract potential RSS sources from search results."""

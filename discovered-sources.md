@@ -1,78 +1,63 @@
 # 🔍 RSS 源发现报告
 
-**日期**: 2026-06-21
+**日期**: 2026-06-28
 **搜索话题**: AI, 音乐, 健康, 艺术审美, 思维认知
 
 ---
 
 ## AI
 
-### 1. AI News & Artificial Intelligence | TechCrunch ⭐⭐⭐⭐
+### 1. RSS Feed Hub ⭐⭐⭐
 
-- **网站**: https://techcrunch.com/category/artificial-intelligence/
-- **RSS**: `https://techcrunch.com/feed/`
-- **推荐理由**: TechCrunch's AI coverage is highly relevant, frequently updated, and professionally written, though some articles are more news-oriented than in-depth analysis.
-TechCrunch 的 AI 报道高度相关、更新频繁且专业，但部分文章更偏向新闻而非深度分析。
-- **最近文章**: Signal’s Meredith Whittaker wants you to remember that AI chatbots ‘are not your friends’, In the Weights is your new AI-centric vanity search, This startup built a fish-killing robot and chefs love the results
-- **质量评分**: 8.0/10
-- **更新频率**: Weekly
-- **订阅建议**: ⚠️ 可选
-
-### 2. Artificial intelligence newsletter : Bubble fears ease | Fox News ⭐⭐⭐
-
-- **网站**: https://www.foxnews.com/tech/ai-newsletter-fears-ai-bubble-ease
-- **RSS**: `https://www.foxnews.com/rss.xml?category=tech`
-- **推荐理由**: Moderate relevance with some AI-specific articles but mixed with general tech news; decent depth but lacks regular AI-focused updates.
-与AI主题相关度中等，部分文章专门讨论AI但混有一般科技新闻；内容有一定深度，但缺乏定期AI专题更新。
-- **最近文章**: Latest Tech News | Fox News, Travel mistake puts phone, laptop and streaming accounts at risk, Meta offers paid training for AI data center jobs
-- **质量评分**: 6.0/10
-- **更新频率**: Multiple times per day
-- **订阅建议**: ⚠️ 可选
-
-### 3. Artificial Intelligence | Scientific American ⭐⭐
-
-- **网站**: https://www.scientificamerican.com/artificial-intelligence/
-- **RSS**: `https://www.scientificamerican.com/platform/syndication/rss/`
-- **推荐理由**: Scientific American is a reputable science magazine, but its AI coverage is sporadic and often tangentially related, with recent posts focusing on longevity, attachment style, and wine chemistry rather than core AI topics.
-《科学美国人》是知名科学杂志，但其AI报道零散且常与主题关联不紧密，近期文章多关注长寿、依恋风格和葡萄酒化学等非核心AI话题。
-- **最近文章**: Silicon Valley's longevity biohackers are engaged in a dangerous experiment, Attachment style may influence how many kids people have, A water treatment expert on what could actually fix the Reflecting Pool
-- **质量评分**: 5.5/10
+- **网站**: https://rss.tedt.org/
+- **RSS**: `https://rss.tedt.org/ai_rss_feed.xml`
+- **推荐理由**: The source covers AI news with moderate relevance and depth, updates regularly, and maintains a professional tone.
+该来源涵盖AI新闻，相关性和深度中等，更新及时，语气专业。
+- **最近文章**: Sakana AI Launches Its First Commercial Product, Sakana Marlin [ ~ ], How Gen AI is Disrupting B2B Buying Decisions [ * ], ENPIRE: Agentic Robot Policy Self-Improvement in the Real World [ ~ ]
+- **质量评分**: 7.0/10
 - **更新频率**: Daily
 - **订阅建议**: ⚠️ 可选
 
-## 艺术审美
+### 2. 100 Must-Follow Artificial Intelligence RSS Feeds - Fusion Chat ⭐⭐⭐
 
-### 1. 我在阿那亚的海边住了 10 天帐篷，做了一个 AI 装置 艺 术 - 王登科-DK... ⭐⭐⭐
-
-- **网站**: https://greatdk.com/2091.html
-- **RSS**: `https://greatdk.com/feed`
-- **推荐理由**: The source has some relevant posts on AI art but is mostly about tech and entrepreneurship, with irregular updates and a casual tone.
-该源有部分关于AI艺术的帖子，但主要涉及科技和创业，更新不规律，语气偏随意。
-- **最近文章**: 3 天 100 万注册用户，日烧千亿 token，一次意外的里程碑, TikTok 也曾经很在乎那一万个新增用户, 做 AI 有形之物的一次探索
+- **网站**: https://fusionchat.ai/news/100-mustfollow-artificial-intelligence-rss-feeds
+- **RSS**: `https://api.fusionchat.ai/api/v1/articles/trending/rss`
+- **推荐理由**: The source covers AI broadly but mixes investment and fashion news, with moderate depth and occasional updates.
+该来源广泛涵盖AI，但混合了投资和时尚新闻，内容深度一般，更新频率不高。
+- **最近文章**: The Ultimate Guide to Investing in AI-Chip Stocks this July, The Dark Side of AI: Unmasking its Environmental Impact, Unveiling the Top Tech Advancements of June 2025
 - **质量评分**: 6.5/10
 - **更新频率**: Multiple times per day
 - **订阅建议**: ⚠️ 可选
 
-## 思维认知
+### 3. The 5 Best AI-Powered News Sites & RSS Readers in 2026 ⭐⭐
 
-### 1. 万物并育—— 思 维 方式与 思 维 模型的协同之道 | 芒格学院 ⭐⭐⭐
+- **网站**: https://techwiseinsider.com/ai-powered-news-sites-and-rss-readers/
+- **RSS**: `https://techwiseinsider.com/feed/`
+- **推荐理由**: The source has some AI-related content but is mixed with general tech and productivity topics, offering moderate relevance and depth.
+该源包含一些AI相关内容，但混合了通用技术和生产力话题，相关性和深度一般。
+- **最近文章**: TechWise Insider, How to automate your WordPress site with AI in 2026, Todoist vs. TickTick: I&#8217;ve tried them both and here&#8217;s the winner
+- **质量评分**: 5.5/10
+- **更新频率**: Daily
+- **订阅建议**: ⚠️ 可选
 
-- **网站**: https://www.madewill.com/thinking-model/the-collaborative-approach-of-thinking-patterns-and-thinking-models.html
-- **RSS**: `https://www.madewill.com/feed`
-- **推荐理由**: Highly relevant to thinking models and cognitive science, with in-depth articles but infrequent updates.
-与思维模型和认知科学高度相关，文章有深度，但更新频率较低。
-- **最近文章**: 打开智慧的宝库——《100个思维模型认知卡片》新版发布, 万物并育——思维方式与思维模型的协同之道, 大道至简，殊路同归：探索顶级思维方式的共通之处
-- **质量评分**: 7.5/10
-- **更新频率**: Weekly
+### 4. Discover the top 100 Artificial Intelligence RSS Feeds for the latest insights on AI trends and developments. Stay informed! ⭐⭐
+
+- **网站**: https://fusionchat.ai/news/100-mustfollow-artificial-intelligence-rss-feeds
+- **RSS**: `https://api.fusionchat.ai/api/v1/articles/trending/rss`
+- **推荐理由**: The source has mixed relevance to AI, with some posts being tangentially related, and the content depth is moderate with a slightly casual tone.
+该源与AI主题的相关性参差不齐，部分帖子仅间接相关，内容深度一般，语气略显随意。
+- **最近文章**: The Ultimate Guide to Investing in AI-Chip Stocks this July, The Dark Side of AI: Unmasking its Environmental Impact, Unveiling the Top Tech Advancements of June 2025
+- **质量评分**: 5.5/10
+- **更新频率**: Multiple times per day
 - **订阅建议**: ⚠️ 可选
 
 ---
 
 ## 📊 推荐统计
 
-- **总发现**: 5 个新源
+- **总发现**: 4 个新源
 - **高质量**: 0 个（评分 ≥ 9.0）
-- **建议订阅**: 1 个（评分 ≥ 8.0）
+- **建议订阅**: 0 个（评分 ≥ 8.0）
 
 ## 🔧 快速操作
 

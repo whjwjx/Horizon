@@ -1,77 +1,44 @@
 # 🔍 RSS 源发现报告
 
-**日期**: 2026-08-16
+**日期**: 2026-08-23
 **搜索话题**: AI, 音乐, 健康, 艺术审美, 思维认知
 
 ---
 
 ## AI
 
-### 1. Best AI Blogs & Newsletters 2026: 20 Sources Engineers ... ⭐⭐⭐⭐
+### 1. Meet the startup helping Wall Street put a price on AI compute ⭐⭐⭐
 
-- **网站**: https://www.tldl.io/resources/best-ai-tech-blogs-rss-2026
-- **RSS**: `https://www.tldl.io/rss.xml`
-- **推荐理由**: The source is highly relevant to AI with recent posts on AI models, costs, and industry news, and it provides professional, in-depth content, though update frequency is not explicitly confirmed.
-该来源与AI高度相关，近期文章涵盖AI模型、成本和行业新闻，内容专业深入，但更新频率未明确确认。
-- **最近文章**: AI News &amp; Updates 2026, Kimi K3 Launches: What the 2.8T Open Model Changes, How Much Does It Cost to Run an AI Agent?
-- **质量评分**: 8.0/10
-- **更新频率**: Daily
-- **订阅建议**: ⚠️ 可选
-
-### 2. AI News & Artificial Intelligence | TechCrunch ⭐⭐⭐
-
-- **网站**: https://techcrunch.com/category/artificial-intelligence/
+- **网站**: https://techcrunch.com/video/meet-the-startup-helping-wall-street-put-a-price-on-ai-compute/
 - **RSS**: `https://techcrunch.com/feed/`
-- **推荐理由**: TechCrunch AI News provides regular, professionally written updates with a mix of relevant AI stories, though some posts are tangential and depth varies.
-TechCrunch AI新闻定期更新，内容专业，但部分报道与AI主题关联度不高，深度参差不齐。
-- **最近文章**: Woman claims her stepfather used Grok to transform childhood photo into explicit imagery, Anthropic shares more details about how Claude’s new watermarks will work, SpaceX officially closes its Cursor acquisition
+- **推荐理由**: The source provides relevant AI-related news with decent depth and regular updates, but lacks a consistent focus on AI compute pricing.
+该来源提供相关的AI新闻，内容有一定深度且更新频繁，但缺乏对AI计算定价的持续关注。
+- **最近文章**: Harvard’s $699 startup bootcamp offers AI avatars of its instructors, Will the DOJ&#8217;s investigation into a16z spook other VCs?, Inherent, founded by DeepMind alumni, says its AI &#8216;teammate&#8217; just outperformed Anthropic and OpenAI at replicating research
 - **质量评分**: 7.5/10
 - **更新频率**: Weekly
 - **订阅建议**: ⚠️ 可选
 
-### 3. Discover the top 100 Artificial Intelligence RSS Feeds for the latest insights on AI trends and developments. Stay informed! ⭐⭐
+### 2. Discover the top 100 Artificial Intelligence RSS Feeds for the latest insights on AI trends and developments. Stay informed! ⭐⭐⭐
 
 - **网站**: https://fusionchat.ai/news/100-mustfollow-artificial-intelligence-rss-feeds
 - **RSS**: `https://api.fusionchat.ai/api/v1/articles/trending/rss`
-- **推荐理由**: The source covers AI-related topics but mixes in general tech and fashion news, lacks depth, and has uncertain update frequency.
-该源涵盖AI相关主题，但混入一般科技和时尚新闻，缺乏深度，更新频率不确定。
+- **推荐理由**: The source covers AI topics but mixes in general tech news and lacks depth, with moderate relevance and update frequency.
+该源涵盖AI主题，但混入一般科技新闻，深度不足，相关性和更新频率中等。
 - **最近文章**: The Ultimate Guide to Investing in AI-Chip Stocks this July, The Dark Side of AI: Unmasking its Environmental Impact, Unveiling the Top Tech Advancements of June 2025
-- **质量评分**: 5.5/10
-- **更新频率**: Multiple times per day
-- **订阅建议**: ⚠️ 可选
-
-### 4. 100 Must-Follow Artificial Intelligence RSS Feeds - Fusion Chat ⭐⭐
-
-- **网站**: https://fusionchat.ai/news/100-mustfollow-artificial-intelligence-rss-feeds
-- **RSS**: `https://api.fusionchat.ai/api/v1/articles/trending/rss`
-- **推荐理由**: The source covers AI topics but with mixed relevance and depth, and updates are irregular.
-该源涵盖AI主题，但相关性和深度参差不齐，更新也不规律。
-- **最近文章**: The Ultimate Guide to Investing in AI-Chip Stocks this July, The Dark Side of AI: Unmasking its Environmental Impact, Unveiling the Top Tech Advancements of June 2025
-- **质量评分**: 5.5/10
+- **质量评分**: 6.5/10
 - **更新频率**: Multiple times per day
 - **订阅建议**: ⚠️ 可选
 
 ## 思维认知
 
-### 1. RSS 源大全：可信信息获取的数据源清单 | Q's blog ⭐⭐⭐
+### 1. 我每天在看的 60 个 RSS 源 - Rex Liu ⭐⭐⭐
 
-- **网站**: https://bsheepcoder.github.io/2026/06/17/rss-source-collection/
-- **RSS**: `https://bsheepcoder.github.io/atom.xml`
-- **推荐理由**: The source covers a wide range of topics with some relevance to thinking and cognition, but not consistently focused.
-该源涵盖广泛主题，与思维认知部分相关，但不够专注。
-- **最近文章**: 一个能赚钱的好产品，必须协同的几个人：从假设到盈利的循环, 数学的两种终结：解题机器与理论建筑师, AI 推翻 87 年 Jacobian 猜想，菲尔兹奖得主当日加入 OpenAI——当数学与 AI 站上交叉路口
-- **质量评分**: 6.5/10
-- **更新频率**: Multiple times per day
-- **订阅建议**: ⚠️ 可选
-
-### 2. rss|top-rss,博客,新闻等rss订阅源 | 编程笔记 ⭐⭐
-
-- **网站**: https://programnotes.cn/hot-blog/
-- **RSS**: `https://programnotes.cn/atom.xml`
-- **推荐理由**: The source is a tech blog with occasional AI-related posts, but it lacks consistent focus on cognitive thinking and has shallow coverage.
-该源是技术博客，偶尔涉及AI相关文章，但缺乏对思维认知的持续关注，内容深度不足。
-- **最近文章**: AI|大模型智力测试,鹈鹕SVG生成, Grok账号如何获取SSO cookie及如何在vscode中使用grok api, 转载|一图看懂大模型性价比
-- **质量评分**: 5.5/10
+- **网站**: https://rexliu.io/posts/my-60-rss-feeds/
+- **RSS**: `https://rexliu.io/rss`
+- **推荐理由**: The source has some relevant posts on thinking and cognition, but the content is mixed and updates are infrequent.
+该源有一些关于思维认知的相关文章，但内容混杂且更新不频繁。
+- **最近文章**: I Fed AI Twelve Years of Annual Reviews. Three Patterns Changed How I Think., On the Wing, 2015 VS 2025
+- **质量评分**: 6.0/10
 - **更新频率**: Multiple times per day
 - **订阅建议**: ⚠️ 可选
 
@@ -79,9 +46,9 @@ TechCrunch AI新闻定期更新，内容专业，但部分报道与AI主题关�
 
 ## 📊 推荐统计
 
-- **总发现**: 6 个新源
+- **总发现**: 3 个新源
 - **高质量**: 0 个（评分 ≥ 9.0）
-- **建议订阅**: 1 个（评分 ≥ 8.0）
+- **建议订阅**: 0 个（评分 ≥ 8.0）
 
 ## 🔧 快速操作
 

@@ -1,44 +1,53 @@
 # 🔍 RSS 源发现报告
 
-**日期**: 2026-08-23
+**日期**: 2026-08-30
 **搜索话题**: AI, 音乐, 健康, 艺术审美, 思维认知
 
 ---
 
 ## AI
 
-### 1. Meet the startup helping Wall Street put a price on AI compute ⭐⭐⭐
+### 1. Best AI Blogs & Newsletters 2026: 20 Sources Engineers Actually Read (With RSS) | TLDL ⭐⭐⭐
 
-- **网站**: https://techcrunch.com/video/meet-the-startup-helping-wall-street-put-a-price-on-ai-compute/
-- **RSS**: `https://techcrunch.com/feed/`
-- **推荐理由**: The source provides relevant AI-related news with decent depth and regular updates, but lacks a consistent focus on AI compute pricing.
-该来源提供相关的AI新闻，内容有一定深度且更新频繁，但缺乏对AI计算定价的持续关注。
-- **最近文章**: Harvard’s $699 startup bootcamp offers AI avatars of its instructors, Will the DOJ&#8217;s investigation into a16z spook other VCs?, Inherent, founded by DeepMind alumni, says its AI &#8216;teammate&#8217; just outperformed Anthropic and OpenAI at replicating research
+- **网站**: https://www.tldl.io/resources/best-ai-tech-blogs-rss-2026
+- **RSS**: `https://www.tldl.io/rss.xml`
+- **推荐理由**: The source is highly relevant to AI with recent posts on AI news, models, and costs, but its update frequency and depth are moderate.
+该来源与AI高度相关，近期文章涵盖AI新闻、模型和成本，但更新频率和深度一般。
+- **最近文章**: AI News &amp; Updates 2026, Kimi K3 Launches: What the 2.8T Open Model Changes, How Much Does It Cost to Run an AI Agent?
 - **质量评分**: 7.5/10
-- **更新频率**: Weekly
+- **更新频率**: Daily
 - **订阅建议**: ⚠️ 可选
 
-### 2. Discover the top 100 Artificial Intelligence RSS Feeds for the latest insights on AI trends and developments. Stay informed! ⭐⭐⭐
+### 2. RSS Feeds | WIRED ⭐⭐⭐
+
+- **网站**: https://www.wired.com/about/rss-feeds/
+- **RSS**: `https://www.wired.com/feed/rss`
+- **推荐理由**: WIRED provides regular, professional tech coverage with some AI-specific articles, but the feed mixes in general tech and science topics, reducing its focus on AI.
+WIRED定期发布专业的科技内容，包含一些AI相关文章，但混合了其他科技和科学话题，降低了AI主题的聚焦度。
+- **最近文章**: Soundcore Liberty 5 Pro Review: Master of Phone Calls, NASA’s Nancy Grace Roman Space Telescope Has a Hidden Technological Leap, The Cybersecurity Apocalypse Is Coming in ‘Months,’ AI Giants Warn
+- **质量评分**: 7.5/10
+- **更新频率**: Daily
+- **订阅建议**: ⚠️ 可选
+
+### 3. Discover the top 100 Artificial Intelligence RSS Feeds for the latest insights on AI trends and developments. Stay informed! ⭐⭐⭐
 
 - **网站**: https://fusionchat.ai/news/100-mustfollow-artificial-intelligence-rss-feeds
 - **RSS**: `https://api.fusionchat.ai/api/v1/articles/trending/rss`
-- **推荐理由**: The source covers AI topics but mixes in general tech news and lacks depth, with moderate relevance and update frequency.
-该源涵盖AI主题，但混入一般科技新闻，深度不足，相关性和更新频率中等。
+- **推荐理由**: The source covers AI-related topics with moderate relevance and depth, but its broad scope and occasional off-topic posts lower its quality.
+该源涵盖与AI相关的主题，相关性和深度适中，但范围广泛且偶尔有偏离主题的帖子，降低了其质量。
 - **最近文章**: The Ultimate Guide to Investing in AI-Chip Stocks this July, The Dark Side of AI: Unmasking its Environmental Impact, Unveiling the Top Tech Advancements of June 2025
-- **质量评分**: 6.5/10
+- **质量评分**: 6.0/10
 - **更新频率**: Multiple times per day
 - **订阅建议**: ⚠️ 可选
 
-## 思维认知
+### 4. 100 Must-Follow Artificial Intelligence RSS Feeds - Fusion Chat ⭐⭐
 
-### 1. 我每天在看的 60 个 RSS 源 - Rex Liu ⭐⭐⭐
-
-- **网站**: https://rexliu.io/posts/my-60-rss-feeds/
-- **RSS**: `https://rexliu.io/rss`
-- **推荐理由**: The source has some relevant posts on thinking and cognition, but the content is mixed and updates are infrequent.
-该源有一些关于思维认知的相关文章，但内容混杂且更新不频繁。
-- **最近文章**: I Fed AI Twelve Years of Annual Reviews. Three Patterns Changed How I Think., On the Wing, 2015 VS 2025
-- **质量评分**: 6.0/10
+- **网站**: https://fusionchat.ai/news/100-mustfollow-artificial-intelligence-rss-feeds
+- **RSS**: `https://api.fusionchat.ai/api/v1/articles/trending/rss`
+- **推荐理由**: The feed covers AI topics but with mixed relevance and depth, and updates are frequent but content is often superficial.
+该源涵盖AI主题，但相关性和深度参差不齐，更新频繁但内容常较浅显。
+- **最近文章**: The Ultimate Guide to Investing in AI-Chip Stocks this July, The Dark Side of AI: Unmasking its Environmental Impact, Unveiling the Top Tech Advancements of June 2025
+- **质量评分**: 5.5/10
 - **更新频率**: Multiple times per day
 - **订阅建议**: ⚠️ 可选
 
@@ -46,7 +55,7 @@
 
 ## 📊 推荐统计
 
-- **总发现**: 3 个新源
+- **总发现**: 4 个新源
 - **高质量**: 0 个（评分 ≥ 9.0）
 - **建议订阅**: 0 个（评分 ≥ 8.0）
 
